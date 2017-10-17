@@ -2,24 +2,33 @@
 
 #pragma once
 
-#include "Engine.h/TriggerVolume.h"
 #include "CoreMinimal.h"
+#include "Engine/TriggerVolume.h"
 #include "Components/ActorComponent.h"
 #include "OpenDoor.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOpenRequest);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BUILDINGESCAPEGAME_API UOpenDoor : public UActorComponent
+class BUILDINGESCAPE_API UOpenDoor : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties #include "Engine.h"
+	// Sets default values for this component's properties
 	UOpenDoor();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnOpenRequest OnOpenRequest;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnOpenRequest OnCloseRequest;
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
+	void TeleportActor();
 
 public:	
 	// Called every frame
@@ -27,17 +36,23 @@ public:
 
 private:
 
-	AActor* Owner;
+	int OpenAngle = 0 ;
+	int DoorCloseDelay = 0;
 
-	UPROPERTY(VisibleAnywhere)
-	float OpenAngle = -120.f;
+	AActor* Owner;
 
 	UPROPERTY(EditAnywhere)
 	ATriggerVolume* PressurePlate;
 
+	//UPROPERTY(EditAnywhere)
+	float GetTotalMassOfActorsOnTriggerPlate();
+
 	UPROPERTY(EditAnywhere)
-	AActor* ActorThatOpens;
+	float TriggerMass = 80.f;
 
+	UPROPERTY(EditAnywhere)
+	ATriggerVolume* PressurePlate2;
 
-
-};
+	UPROPERTY(EditAnywhere)
+	AActor* ActorTeleporting;
+}; 
